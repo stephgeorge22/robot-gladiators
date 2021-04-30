@@ -11,27 +11,44 @@ var randomNumber = function(min, max) {
     return value;
 };
 
-//fight function (now with parameter for enemy's object holding name, health, and attack values)
-var fight = function(enemy) {
-    // repeat and execute as long as the eney-robot is alive
-    while(playerInfo.health > 0 && enemy.health > 0) {
+var fightOrSkip = function() {
+    // ask player if they'd like to fight or skip using fightOrSkip functino
+    var promptFight = window.prompt('Would you like to FIGHT or SKIP this battle? Enter "FIGHT" or "SKIP" to choose.');
+    
+    // Conditional Fight Recursive Function Call
+    if (!promptFight) {
+        window.alert("You need to provide a valid answer! Please try again.");
+        return fightOrSkip();
+    }
 
-        // ask player if they'd like to fight or skip
-        var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose." );
-
-        // if player picked "skip" confirm and then stop the loop 
-        if (promptFight === "skip" || promptFight === "SKIP") {
+    // if player picks "skip" confirm and then stop the loop
+    promptFight = promptFight.toLowerCase();
+    
+        if (promptFight === "skip") {
             // confirm player wants to skip
             var confirmSkip = window.confirm("Are you sure you'd like to quit?");
 
             // if yes (true), leave fight
             if (confirmSkip) {
                 window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
-                // subtract money from playerInfo.money for skipping
-                playerInfo.money = Math.max(0,playerInfo.money - 10);
-                console.log("playerInfo.money", playerInfo.money);
-                break;
+                // subtract money from playerMoney for skipping
+                playerInfo.playerMoney = playerInfo.money - 10;
+                
+                // return true if player wants to leave
+                return true;
             }
+        }   
+}
+
+
+//fight function (now with parameter for enemy's object holding name, health, and attack values)
+var fight = function(enemy) {
+    // repeat and execute as long as the eney-robot is alive
+    while(playerInfo.health > 0 && enemy.health > 0) {
+        // ask player if they'd like to fight or skip using fightOrSkip function
+        if (fightOrSkip()) {
+            // if true, leave fight by breaking loop
+            break;
         }
 
         //if player choses to fight, then fight
@@ -76,11 +93,6 @@ var fight = function(enemy) {
         } else {
             window.alert(playerInfo.name + " still has " + playerInfo.health + " health left.");
         }
-
-        //if no (false), ask question again my running fight() again
-        // } else {
-        //     window.alert("You need to choose a valid option. Try again!");
-        //}
     }
 };
 
